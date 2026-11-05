@@ -7,12 +7,14 @@ import (
 
 type Client struct {
 	apiKey     string
+	baseURL    string
 	httpClient *http.Client
 }
 
 func NewClient(apiKey string) *Client {
 	return &Client{
-		apiKey: apiKey,
+		apiKey:  apiKey,
+		baseURL: "https://www.alphavantage.co/query",
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
