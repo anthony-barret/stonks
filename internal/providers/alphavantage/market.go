@@ -9,3 +9,8 @@ type Market struct {
 	CurrentStatus    string `json:"current_status"`
 	Notes            string `json:"notes"`
 }
+
+type MarketStatus struct {
+	Endpoint string   `json:"endpoint"`
+	Markets  []Market `json:"markets"`
+}
