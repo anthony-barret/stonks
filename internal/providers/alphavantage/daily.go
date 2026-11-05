@@ -7,3 +7,14 @@ type DailyTimeSeries struct {
 	Close  string `json:"4. close"`
 	Volume string `json:"5. volume"`
 }
+
+type TimeSeries struct {
+	MetaData struct {
+		Information   string `json:"1. Information"`
+		Symbol        string `json:"2. Symbol"`
+		LastRefreshed string `json:"3. Last Refreshed"`
+		OutputSize    string `json:"4. Output Size"`
+		TimeZone      string `json:"5. Time Zone"`
+	} `json:"Meta Data"`
+	TimeSeries map[string]DailyTimeSeries `json:"Time Series (Daily)"`
+}
