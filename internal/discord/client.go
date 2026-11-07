@@ -17,3 +17,10 @@ func NewClient(token string) *DiscordClient {
 	}
 	return &DiscordClient{session: session}
 }
+
+func (d *DiscordClient) Run() {
+	err := d.session.Open()
+	if err != nil {
+		log.Fatal("Error during the opening of the discord session", err)
+	}
+}
