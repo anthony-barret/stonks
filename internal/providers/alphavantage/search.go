@@ -1,5 +1,11 @@
 package alphavantage
 
+import (
+	"encoding/json"
+	"fmt"
+	"io"
+)
+
 type Match struct {
 	Symbol      string `json:"1. symbol"`
 	Name        string `json:"2. name"`
@@ -14,4 +20,24 @@ type Match struct {
 
 type BestMatches struct {
 	BestMatches []Match `json:"bestMatches"`
+}
+
+func (c *Client) TyckerSearch(keywords string) (*BestMatches, error) {
+	url := c.baseURL + "?function=SYMBOL_SEARCH&keywords=" + keywords + "&apikey=" + c.apiKey
+	resp, err := c.httpClient.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(string(body))
+	matches := BestMatches{}
+	err = json.Unmarshal(body, &matches)
+	if err != nil {
+		return nil, err
+	}
+	return &matches, nil
 }
