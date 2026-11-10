@@ -31,6 +31,10 @@ func (c *Client) GetMarketStatus() (*MarketStatus, error) {
 	if err != nil {
 		return nil, err
 	}
+	err = checkAPIError(body)
+	if err != nil {
+		return nil, err
+	}
 	market := MarketStatus{}
 	err = json.Unmarshal(body, &market)
 	if err != nil {
