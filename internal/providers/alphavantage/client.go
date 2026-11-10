@@ -20,3 +20,9 @@ func NewClient(apiKey string) *Client {
 		},
 	}
 }
+
+type APIError struct {
+	ErrorMessage string `json:"Error Message"`
+	Information  string `json:"Information"`
+	Note         string `json:"Note"`
+}
