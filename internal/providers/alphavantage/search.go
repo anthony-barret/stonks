@@ -11,3 +11,7 @@ type Match struct {
 	Currency    string `json:"8. currency"`
 	MatchScore  string `json:"9. matchScore"`
 }
+
+type BestMatches struct {
+	BestMatches []Match `json:"bestMatches"`
+}
