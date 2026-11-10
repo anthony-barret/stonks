@@ -2,7 +2,6 @@ package alphavantage
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 )
 
@@ -33,7 +32,10 @@ func (c *Client) TyckerSearch(keywords string) (*BestMatches, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
+	err = checkAPIError(body)
+	if err != nil {
+		return nil, err
+	}
 	matches := BestMatches{}
 	err = json.Unmarshal(body, &matches)
 	if err != nil {
