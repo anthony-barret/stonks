@@ -35,6 +35,10 @@ func (c *Client) GetTimeSeriesDailyForSymbol(symbol string) (*TimeSeries, error)
 	if err != nil {
 		return nil, err
 	}
+	err = checkAPIError(body)
+	if err != nil {
+		return nil, err
+	}
 	timeSeries := TimeSeries{}
 	err = json.Unmarshal(body, &timeSeries)
 	if err != nil {
