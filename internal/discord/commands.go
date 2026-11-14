@@ -7,6 +7,17 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
+var commands = []*discordgo.ApplicationCommand{
+	{
+		Name:        "market-status",
+		Description: "Check the market status",
+	},
+	{
+		Name:        "daily-quotation",
+		Description: "Get the daily quotation for a symbol",
+	},
+}
+
 func commandMarketStatus(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	api := alphavantage.NewClient(os.Getenv("ALPHAVANTAGE_TOKEN"))
 	marketStatus, err := api.GetMarketStatus()

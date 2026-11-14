@@ -19,12 +19,7 @@ func NewClient(appID string, guildID string, token string, stockAPIClient *alpha
 	if err != nil {
 		log.Fatal("Error during the creation of the discord bot", err)
 	}
-	session.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
-		{
-			Name:        "market-status",
-			Description: "Check the market status",
-		},
-	})
+	session.ApplicationCommandBulkOverwrite(appID, guildID, commands)
 
 	session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		data := i.ApplicationCommandData()
