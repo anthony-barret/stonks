@@ -1,9 +1,6 @@
 package discord
 
 import (
-	"os"
-
-	"github.com/anthony-barret/stonks/internal/providers/alphavantage"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -25,18 +22,17 @@ func (d *DiscordClient) handleInteraction(s *discordgo.Session, i *discordgo.Int
 
 	switch i.ApplicationCommandData().Name {
 	case "market-status":
-		d.commandMarketStatus(s, i)
+		d.commandMarketStatus(i)
 
 	case "daily-quotation":
-		d.commandDailyQuotation(s, i)
+		d.commandDailyQuotation(i)
 	}
 }
 
-func (d *DiscordClient) commandMarketStatus(s *discordgo.Session, i *discordgo.InteractionCreate) {
-	api := alphavantage.NewClient(os.Getenv("ALPHAVANTAGE_TOKEN"))
-	marketStatus, err := api.GetMarketStatus()
+func (d *DiscordClient) commandMarketStatus(i *discordgo.InteractionCreate) {
+	marketStatus, err := d.stockAPIClient.GetMarketStatus()
 	if err != nil {
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		d.session.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseChannelMessageWithSource,
 			Data: &discordgo.InteractionResponseData{
 				Content: "Failed to fetch market status.",
@@ -52,7 +48,7 @@ func (d *DiscordClient) commandMarketStatus(s *discordgo.Session, i *discordgo.I
 			Inline: true,
 		})
 	}
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+	d.session.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 		Type: discordgo.InteractionResponseChannelMessageWithSource,
 		Data: &discordgo.InteractionResponseData{
 			Embeds: []*discordgo.MessageEmbed{{
@@ -62,5 +58,4 @@ func (d *DiscordClient) commandMarketStatus(s *discordgo.Session, i *discordgo.I
 			}},
 		},
 	})
-
 }
