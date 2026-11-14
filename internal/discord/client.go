@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/anthony-barret/stonks/internal/providers/alphavantage"
@@ -19,7 +20,6 @@ func NewClient(appID string, guildID string, token string, stockAPIClient *alpha
 	if err != nil {
 		log.Fatal("Error during the creation of the discord bot", err)
 	}
-	session.ApplicationCommandBulkOverwrite(appID, guildID, commands)
 
 	session.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		data := i.ApplicationCommandData()
@@ -31,16 +31,21 @@ func NewClient(appID string, guildID string, token string, stockAPIClient *alpha
 	return &DiscordClient{session: session, applicationID: appID, guildID: guildID, stockAPIClient: stockAPIClient}
 }
 
-func (d *DiscordClient) Run() {
-	err := d.session.Open()
-	if err != nil {
-		log.Fatal("Error when opening the discord session", err)
+func (d *DiscordClient) Run() error {
+	if err := d.session.Open(); err != nil {
+		return fmt.Errorf("open Discord session: %w", err)
 	}
+	_, err := d.session.ApplicationCommandBulkOverwrite(d.applicationID, d.guildID, commands)
+	if err != nil {
+		d.session.Close()
+		return fmt.Errorf("register Discord commands: %w", err)
+	}
+	return nil
 }
 
-func (d *DiscordClient) Stop() {
-	err := d.session.Close()
-	if err != nil {
-		log.Fatal("Error when closing the discord session", err)
+func (d *DiscordClient) Stop() error {
+	if err := d.session.Close(); err != nil {
+		return fmt.Errorf("close Discord session: %w", err)
 	}
+	return nil
 }
