@@ -2,21 +2,24 @@ package discord
 
 import (
 	"log"
-	"os"
 
+	"github.com/anthony-barret/stonks/internal/providers/alphavantage"
 	"github.com/bwmarrin/discordgo"
 )
 
 type DiscordClient struct {
-	session *discordgo.Session
+	session        *discordgo.Session
+	applicationID  string
+	guildID        string
+	stockAPIClient *alphavantage.Client
 }
 
-func NewClient(token string) *DiscordClient {
+func NewClient(appID string, guildID string, token string, stockAPIClient *alphavantage.Client) *DiscordClient {
 	session, err := discordgo.New("Bot " + token)
 	if err != nil {
 		log.Fatal("Error during the creation of the discord bot", err)
 	}
-	session.ApplicationCommandBulkOverwrite(os.Getenv("DISCORD_APP_ID"), os.Getenv("DISCORD_GUILD_ID"), []*discordgo.ApplicationCommand{
+	session.ApplicationCommandBulkOverwrite(appID, guildID, []*discordgo.ApplicationCommand{
 		{
 			Name:        "market-status",
 			Description: "Check the market status",
@@ -30,7 +33,7 @@ func NewClient(token string) *DiscordClient {
 			commandMarketStatus(s, i)
 		}
 	})
-	return &DiscordClient{session: session}
+	return &DiscordClient{session: session, applicationID: appID, guildID: guildID, stockAPIClient: stockAPIClient}
 }
 
 func (d *DiscordClient) Run() {
