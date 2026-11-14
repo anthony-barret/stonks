@@ -18,7 +18,21 @@ var commands = []*discordgo.ApplicationCommand{
 	},
 }
 
-func commandMarketStatus(s *discordgo.Session, i *discordgo.InteractionCreate) {
+func (d *DiscordClient) handleInteraction(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	if i.Type != discordgo.InteractionApplicationCommand {
+		return
+	}
+
+	switch i.ApplicationCommandData().Name {
+	case "market-status":
+		d.commandMarketStatus(s, i)
+
+	case "daily-quotation":
+		d.commandDailyQuotation(s, i)
+	}
+}
+
+func (d *DiscordClient) commandMarketStatus(s *discordgo.Session, i *discordgo.InteractionCreate) {
 	api := alphavantage.NewClient(os.Getenv("ALPHAVANTAGE_TOKEN"))
 	marketStatus, err := api.GetMarketStatus()
 	if err != nil {
